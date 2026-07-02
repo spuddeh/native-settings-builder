@@ -17,7 +17,7 @@ export function MetadataForm() {
   const renameMod = (modName: string) => {
     const patch: Parameters<typeof setMod>[0] = { modName }
     if (mod.cetFolderName === pascalize(mod.modName)) patch.cetFolderName = pascalize(modName)
-    if (mod.subCategoryPrefix === slugify(mod.modName)) patch.subCategoryPrefix = slugify(modName)
+    if (mod.subCategoryPrefix === mod.modName) patch.subCategoryPrefix = modName
     if (mod.tabMode === 'own' && mod.ownTab && mod.ownTab.id === slugify(mod.modName) && mod.ownTab.label === mod.modName) {
       patch.ownTab = { id: slugify(modName), label: modName }
     }
@@ -55,11 +55,10 @@ export function MetadataForm() {
         />
       </div>
       <TextField
-        label="Section prefix"
+        label="Section prefix (optional)"
         value={mod.subCategoryPrefix}
         onChange={(subCategoryPrefix) => setMod({ subCategoryPrefix })}
-        mono
-        hint="Prefixed to every section path so two mods never collide in a shared tab"
+        hint='Shown before section names in a shared tab, e.g. "Glen - Main". Also keeps section paths unique between mods. Leave empty to skip.'
       />
       <SelectField
         label="Tab mode"

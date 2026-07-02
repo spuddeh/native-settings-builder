@@ -10,6 +10,7 @@ export function CategoryList(props: { issues: Issue[] }) {
   const { addCategory, updateCategory, moveCategory, removeCategory, selectCategory } = useProjectStore()
   const [newLabel, setNewLabel] = useState('')
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [renaming, setRenaming] = useState<string | null>(null)
 
   const worstFor = (id: string): 'error' | 'warning' | null => {
     const relevant = props.issues.filter((i) => i.path === `category:${id}`)
@@ -27,17 +28,38 @@ export function CategoryList(props: { issues: Issue[] }) {
           <div
             key={cat.id}
             className={`list-item ${selectedCategoryId === cat.id ? 'active' : ''}`}
+            style={{ cursor: 'pointer' }}
             onClick={() => selectCategory(cat.id)}
+            onDoubleClick={() => setRenaming(cat.id)}
           >
             {dot && <span className={`issue-dot ${dot}`} />}
-            <input
-              type="text"
-              value={cat.label}
-              style={{ flex: 1, border: 'none', background: 'transparent', padding: '2px 4px' }}
-              onChange={(e) => updateCategory(cat.id, { label: e.target.value })}
-              onClick={(e) => e.stopPropagation()}
-            />
+            {renaming === cat.id ? (
+              <input
+                type="text"
+                value={cat.label}
+                autoFocus
+                style={{ flex: 1, padding: '2px 6px' }}
+                onChange={(e) => updateCategory(cat.id, { label: e.target.value })}
+                onClick={(e) => e.stopPropagation()}
+                onBlur={() => setRenaming(null)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === 'Escape') setRenaming(null)
+                }}
+              />
+            ) : (
+              <span className="grow">{cat.label}</span>
+            )}
             <span className="dim">{count}</span>
+            <button
+              className="icon"
+              title="Rename section (or double-click the row)"
+              onClick={(e) => {
+                e.stopPropagation()
+                setRenaming(renaming === cat.id ? null : cat.id)
+              }}
+            >
+              ✎
+            </button>
             <button className="icon" disabled={i === 0} onClick={(e) => { e.stopPropagation(); moveCategory(cat.id, -1) }}>▲</button>
             <button className="icon" disabled={i === categories.length - 1} onClick={(e) => { e.stopPropagation(); moveCategory(cat.id, 1) }}>▼</button>
             <button className="icon danger" onClick={(e) => { e.stopPropagation(); setDeleting(cat.id) }}>✕</button>

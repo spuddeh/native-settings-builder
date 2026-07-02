@@ -1,5 +1,5 @@
-import type { SettingsDoc, SettingsOption, WidgetType } from './schema'
-import { SCHEMA_VERSION } from './schema'
+import type { CallbackApply, SettingsDoc, SettingsOption, WidgetType } from './schema'
+import { LEGAL_APPLY, SCHEMA_VERSION } from './schema'
 
 declare const __RUNTIME_VERSION__: string
 declare const __SITE_VERSION__: string
@@ -31,10 +31,58 @@ export function newDoc(): SettingsDoc {
       modVersion: '1.0.0',
       tabMode: 'own',
       ownTab: { id: 'my_mod', label: 'My Mod' },
-      subCategoryPrefix: 'my_mod',
+      subCategoryPrefix: 'My Mod',
     },
     categories: [{ id: 'general', label: 'General' }],
     options: [],
+  }
+}
+
+/**
+ * Converts an option to another widget type, keeping id, label, description,
+ * section and visibility. Widget-specific fields reset to defaults; the effect
+ * survives when the new widget supports it (callbacks carry over, and buttons
+ * and key bindings get one created if needed).
+ */
+export function convertOption(opt: SettingsOption, type: WidgetType): SettingsOption {
+  if (type === opt.type) return opt
+  const base = {
+    id: opt.id,
+    category: opt.category,
+    label: opt.label,
+    description: opt.description,
+    showInMenu: opt.showInMenu,
+  }
+  const carried = opt.apply && LEGAL_APPLY[type].includes(opt.apply.kind) ? opt.apply : undefined
+  const callback: CallbackApply =
+    carried?.kind === 'callback'
+      ? carried
+      : { kind: 'callback', function: `${opt.id}_pressed`, lua: '' }
+
+  switch (type) {
+    case 'switch':
+      return {
+        ...base,
+        type,
+        default: false,
+        apply: carried as Extract<SettingsOption, { type: 'switch' }>['apply'],
+      }
+    case 'rangeInt':
+      return { ...base, type, min: 0, max: 10, step: 1, default: 5, apply: carried?.kind === 'callback' ? carried : undefined }
+    case 'rangeFloat':
+      return { ...base, type, min: 0, max: 1, step: 0.05, format: '%.2f', default: 0.5, apply: carried?.kind === 'callback' ? carried : undefined }
+    case 'selectorString':
+      return {
+        ...base,
+        type,
+        elements: ['Option A', 'Option B'],
+        default: 1,
+        apply: carried?.kind === 'callback' ? carried : undefined,
+      }
+    case 'button':
+      return { ...base, type, buttonText: 'Apply', textSize: 45, apply: callback }
+    case 'keyBinding':
+      return { ...base, type, default: 'IK_F5', isHold: false, apply: callback }
   }
 }
 

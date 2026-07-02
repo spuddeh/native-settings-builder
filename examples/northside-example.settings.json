@@ -17,7 +17,7 @@
       "label": "Example Locations",
       "landingHeader": "Click a button to open each location's settings"
     },
-    "subCategoryPrefix": "ns_apt"
+    "subCategoryPrefix": "Northside"
   },
   "categories": [
     { "id": "general", "label": "General" },

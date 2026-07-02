@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useProjectStore } from '../state/store'
-import type { SelectorStringOption, SettingsOption } from '../model/schema'
+import type { SelectorStringOption, SettingsOption, WidgetType } from '../model/schema'
 import { WIDGET_LABELS } from '../model/schema'
+import { convertOption } from '../model/defaults'
 import { IK_KEYS } from '../model/ikKeys'
 import { CheckField, NumberField, SelectField, TextField } from './fields'
 import { ApplyEditor } from './ApplyEditor'
@@ -81,9 +82,12 @@ export function OptionEditor() {
         <SelectField
           label="Widget"
           value={opt.type}
-          onChange={() => undefined}
-          options={[{ value: opt.type, label: WIDGET_LABELS[opt.type] }]}
-          hint="Fixed after creation; add a new option to use another widget"
+          onChange={(type) => update(convertOption(opt, type as WidgetType))}
+          options={(Object.keys(WIDGET_LABELS) as WidgetType[]).map((t) => ({
+            value: t,
+            label: WIDGET_LABELS[t],
+          }))}
+          hint="Switching widget resets its widget-specific fields (range, choices, effect details)"
         />
       </div>
       {opt.type !== 'button' && (

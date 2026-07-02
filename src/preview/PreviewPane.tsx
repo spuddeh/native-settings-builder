@@ -55,11 +55,12 @@ export function PreviewPane() {
 
   return (
     <div className="cp-pane">
+      {/* neighbouring tabs are other installed mods' settings tabs, not game settings */}
       <div className="cp-tabbar">
         <span className="cp-tab-page">1</span>
-        <span className="cp-tab">Filter Saves</span>
+        <span className="cp-tab">Some Mod</span>
         <span className="cp-tab active">{tabLabel || 'My Mod'}</span>
-        <span className="cp-tab">Gameplay</span>
+        <span className="cp-tab">Another Mod</span>
         <span className="cp-tab-page">3</span>
       </div>
 
@@ -87,7 +88,9 @@ export function PreviewPane() {
               return (
                 <div key={cat.id}>
                   <div className="cp-subheader">
-                    {doc.mod.subCategoryPrefix ? `${doc.mod.subCategoryPrefix.replace(/_/g, ' ')} - ` : ''}
+                    {doc.mod.tabMode === 'shared' && doc.mod.subCategoryPrefix
+                      ? `${doc.mod.subCategoryPrefix} - `
+                      : ''}
                     {cat.label}
                   </div>
                   {options.map((opt) => (
@@ -119,7 +122,7 @@ export function PreviewPane() {
 
         <div className="cp-keyhints">
           <span className="cp-keyhint"><kbd>F1</kbd> Restore Defaults</span>
-          <span className="cp-keyhint close"><kbd>ESC</kbd> Close</span>
+          <span className="cp-keyhint"><kbd>ESC</kbd> Close</span>
         </div>
       </div>
 
@@ -169,7 +172,9 @@ function Widget({
       return (
         <div className={`cp-toggle ${on ? 'on' : 'off'}`} onClick={() => set(!on)}>
           <span className="cp-toggle-state">{on ? 'ON' : 'OFF'}</span>
-          <span className="cp-toggle-box" />
+          <span className="cp-toggle-box">
+            <span className="cp-toggle-knob" />
+          </span>
         </div>
       )
     }

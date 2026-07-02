@@ -11,7 +11,20 @@ local SharedTab = require("modules/sharedtab")
 local Builder = {}
 
 local function slug(text)
-    return tostring(text):gsub("%s+", "_"):lower()
+    return (tostring(text):gsub("[^%w]+", "_"):lower())
+end
+
+-- The section prefix is optional free text. Shown verbatim before section
+-- labels in shared tabs; always sanitized when used in subcategory paths.
+local function displayPrefix(mod)
+    if type(mod.subCategoryPrefix) == "string" and mod.subCategoryPrefix ~= "" then
+        return mod.subCategoryPrefix
+    end
+    return nil
+end
+
+local function pathPrefix(mod)
+    return slug(displayPrefix(mod) or mod.cetFolderName or mod.modName)
 end
 
 local function makeOnChange(ctx, opt)
@@ -78,7 +91,8 @@ local BUILDERS = {
 -- Adds all subcategories + options for this mod under tabPath.
 local function buildOptions(ns, ctx, tabPath)
     local def = ctx.def
-    local prefix = slug(def.mod.subCategoryPrefix or def.mod.cetFolderName or def.mod.modName)
+    local prefix = pathPrefix(def.mod)
+    local labelPrefix = def.mod.tabMode == "shared" and displayPrefix(def.mod) or nil
     ctx.widgets = {}
 
     for _, category in ipairs(def.categories) do
@@ -91,7 +105,11 @@ local function buildOptions(ns, ctx, tabPath)
             end
         end
         if hasVisibleOption then
-            ns.addSubcategory(subPath, Lang.get("categories." .. category.id, category.label))
+            local label = Lang.get("categories." .. category.id, category.label)
+            if labelPrefix then
+                label = Lang.get("mod.subCategoryPrefix", labelPrefix) .. " - " .. label
+            end
+            ns.addSubcategory(subPath, label)
             for _, opt in ipairs(def.options) do
                 if opt.category == category.id and opt.showInMenu ~= false then
                     local build = BUILDERS[opt.type]
@@ -141,8 +159,7 @@ function Builder.buildDetail(ns, ctx)
     tab.subcategories = {}
     tab.keys = {}
 
-    local prefix = slug(ctx.def.mod.subCategoryPrefix or ctx.def.mod.cetFolderName or ctx.def.mod.modName)
-    local backPath = tabPath .. "/" .. prefix .. "_nsb_back"
+    local backPath = tabPath .. "/" .. pathPrefix(ctx.def.mod) .. "_nsb_back"
     ns.addSubcategory(backPath, Lang.get("mod.modName", ctx.def.mod.modName))
     ns.addButton(backPath, "Back", "Return to the mod list", "Back", 45, function()
         SharedTab.renderLanding(ns, sharedTabDef)

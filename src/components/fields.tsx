@@ -14,7 +14,7 @@ export function Dialog(props: { title: string; onClose: () => void; children: Re
     <div className="dialog-backdrop" onClick={props.onClose}>
       <div className="dialog" onClick={(e) => e.stopPropagation()}>
         <h2>{props.title}</h2>
-        {props.children}
+        <div className="dialog-scroll">{props.children}</div>
       </div>
     </div>
   )

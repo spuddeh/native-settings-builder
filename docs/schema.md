@@ -27,7 +27,7 @@ A machine-readable JSON Schema is published at `schema/settings.schema.json`.
 | `tabMode` | `"own"` or `"shared"` | |
 | `ownTab` | `{ id, label }` | Required when `tabMode` is `own` |
 | `sharedTab` | `{ id, label, landingHeader? }` | Required when `tabMode` is `shared`; the id must be identical in every mod of the family |
-| `subCategoryPrefix` | string | Prefixed to every subcategory path so mods never collide in a shared tab |
+| `subCategoryPrefix` | string, optional | Free text. In shared tabs it is shown before every section label ("Glen - Main" style). A sanitized form of it (or of the folder name, when empty) also prefixes subcategory paths so mods never collide in a shared tab |
 
 ## Options
 

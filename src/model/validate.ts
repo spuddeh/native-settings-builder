@@ -130,9 +130,6 @@ export function validate(doc: SettingsDoc): Issue[] {
   if (!FOLDER_RE.test(mod.cetFolderName)) {
     issues.push(err('mod', 'CET folder name may only contain letters, digits, "-" and "_"'))
   }
-  if (!SLUG_RE.test(mod.subCategoryPrefix)) {
-    issues.push(err('mod', 'Section prefix must be lowercase letters, digits and underscores'))
-  }
   if (mod.tabMode === 'own') {
     if (!mod.ownTab || !SLUG_RE.test(mod.ownTab.id)) {
       issues.push(err('mod', 'Own tab id must be lowercase letters, digits and underscores'))

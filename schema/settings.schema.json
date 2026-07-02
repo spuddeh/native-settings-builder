@@ -18,7 +18,7 @@
     },
     "mod": {
       "type": "object",
-      "required": ["modName", "cetFolderName", "modVersion", "tabMode", "subCategoryPrefix"],
+      "required": ["modName", "cetFolderName", "modVersion", "tabMode"],
       "properties": {
         "modName": { "type": "string", "minLength": 1 },
         "cetFolderName": { "type": "string", "pattern": "^[A-Za-z0-9_-]+$" },
@@ -42,7 +42,7 @@
             "landingHeader": { "type": "string" }
           }
         },
-        "subCategoryPrefix": { "$ref": "#/$defs/slug" }
+        "subCategoryPrefix": { "type": "string" }
       }
     },
     "categories": {

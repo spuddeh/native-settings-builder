@@ -32,10 +32,6 @@
   --font-ui: Rajdhani, 'Segoe UI', sans-serif;
   --font-tech: 'Chakra Petch', Rajdhani, sans-serif;
 
-  /* single-cut corner, the game's signature shape */
-  --chamfer: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
-  --chamfer-sm: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 0 100%);
-
   font-family: var(--font-ui);
   color-scheme: dark;
 }
@@ -70,7 +66,12 @@ body {
   scrollbar-color: var(--red-deep) transparent;
 }
 
-/* ---------- controls ---------- */
+/* ---------- controls ----------
+   Chamfered frames are drawn as two stacked clipped layers: ::before is the
+   border color clipped to the outer polygon, ::after is the fill clipped to
+   the same polygon inset by 1px. The diagonal and the straight edges are one
+   shape, so they always connect at a uniform 1px. --edge is the border color,
+   --fill the interior, --cut the corner size. */
 
 button {
   font-family: var(--font-tech);
@@ -79,34 +80,68 @@ button {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--red);
-  background: transparent;
-  border: 1px solid var(--red-dim);
-  padding: 6px 14px;
+  background: none;
+  border: none;
+  padding: 7px 15px;
   cursor: pointer;
-  clip-path: var(--chamfer-sm);
+  position: relative;
+  isolation: isolate;
+  --cut: 7px;
+  --edge: var(--red-dim);
+  --fill: var(--panel);
+}
+
+/* scoped away from the preview, whose buttons draw their own frames */
+button:not(.cp-pane *)::before,
+button:not(.cp-pane *)::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+button:not(.cp-pane *)::before {
+  inset: 0;
+  z-index: -2;
+  background: var(--edge);
+  clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
+}
+
+button:not(.cp-pane *)::after {
+  inset: 1px;
+  z-index: -1;
+  background: var(--fill);
+  clip-path: polygon(0 0, calc(100% - var(--cut) + 0.41px) 0, 100% calc(var(--cut) - 0.41px), 100% 100%, 0 100%);
 }
 
 button:hover {
   color: var(--cyan);
-  border-color: var(--cyan-dim);
+  --edge: var(--cyan-dim);
 }
 
 button.primary {
-  background: var(--red);
-  border-color: var(--red);
   color: #14090a;
+  --edge: var(--red);
+  --fill: var(--red);
 }
 
 button.primary:hover {
-  background: var(--cyan);
-  border-color: var(--cyan);
   color: #06181a;
+  --edge: var(--cyan);
+  --fill: var(--cyan);
 }
 
 button.icon {
-  padding: 3px 8px;
+  padding: 4px 9px;
   font-size: 12px;
-  border-color: var(--line);
+  --edge: var(--line);
+}
+
+button.icon:hover {
+  --edge: var(--cyan-dim);
+}
+
+.list-item button {
+  --fill: var(--panel-2);
 }
 
 button:disabled {
@@ -288,10 +323,35 @@ label.check input {
   font-weight: 600;
   letter-spacing: 0.08em;
   color: var(--cyan);
-  border: 1px solid var(--line);
-  padding: 3px 8px;
-  clip-path: var(--chamfer-sm);
-  background: var(--bg-2);
+  border: none;
+  background: none;
+  padding: 4px 9px;
+  position: relative;
+  isolation: isolate;
+  --cut: 7px;
+  --edge: var(--line);
+  --fill: var(--bg-2);
+}
+
+.badge::before,
+.badge::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+.badge::before {
+  inset: 0;
+  z-index: -2;
+  background: var(--edge);
+  clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
+}
+
+.badge::after {
+  inset: 1px;
+  z-index: -1;
+  background: var(--fill);
+  clip-path: polygon(0 0, calc(100% - var(--cut) + 0.41px) 0, 100% calc(var(--cut) - 0.41px), 100% 100%, 0 100%);
 }
 
 .err-badge {
@@ -308,10 +368,35 @@ label.check input {
 /* ---------- sections ---------- */
 
 .section {
-  background: var(--panel);
-  border: 1px solid var(--line-soft);
+  border: none;
+  background: none;
   margin-bottom: 14px;
-  clip-path: var(--chamfer);
+  position: relative;
+  isolation: isolate;
+  --cut: 10px;
+  --edge: var(--line-soft);
+  --fill: var(--panel);
+}
+
+.section::before,
+.section::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+.section::before {
+  inset: 0;
+  z-index: -2;
+  background: var(--edge);
+  clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
+}
+
+.section::after {
+  inset: 1px;
+  z-index: -1;
+  background: var(--fill);
+  clip-path: polygon(0 0, calc(100% - var(--cut) + 0.41px) 0, 100% calc(var(--cut) - 0.41px), 100% 100%, 0 100%);
 }
 
 .section > .section-head {
@@ -515,13 +600,43 @@ label.check input {
 
 .dialog {
   position: relative;
-  background: var(--panel);
-  border: 1px solid var(--red-deep);
-  padding: 18px;
+  isolation: isolate;
+  border: none;
+  background: none;
+  padding: 19px;
   width: min(680px, 92vw);
   max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  --cut: 10px;
+  --edge: var(--red-deep);
+  --fill: var(--panel);
+}
+
+.dialog::before,
+.dialog::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+.dialog::before {
+  inset: 0;
+  z-index: -2;
+  background: var(--edge);
+  clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
+}
+
+.dialog::after {
+  inset: 1px;
+  z-index: -1;
+  background: var(--fill);
+  clip-path: polygon(0 0, calc(100% - var(--cut) + 0.41px) 0, 100% calc(var(--cut) - 0.41px), 100% 100%, 0 100%);
+}
+
+.dialog-scroll {
   overflow-y: auto;
-  clip-path: var(--chamfer);
+  min-height: 0;
 }
 
 .dialog h2 {
@@ -564,16 +679,40 @@ label.check input {
   right: 18px;
   bottom: 18px;
   z-index: 60;
-  background: var(--panel);
-  border: 1px solid var(--cyan-dim);
+  background: none;
+  border: none;
   color: var(--cyan);
   font-family: var(--font-tech);
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.05em;
-  padding: 10px 16px;
-  clip-path: var(--chamfer-sm);
+  padding: 11px 17px;
   animation: toast-in 160ms ease-out;
+  isolation: isolate;
+  --cut: 7px;
+  --edge: var(--cyan-dim);
+  --fill: var(--panel);
+}
+
+.toast::before,
+.toast::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+.toast::before {
+  inset: 0;
+  z-index: -2;
+  background: var(--edge);
+  clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
+}
+
+.toast::after {
+  inset: 1px;
+  z-index: -1;
+  background: var(--fill);
+  clip-path: polygon(0 0, calc(100% - var(--cut) + 0.41px) 0, 100% calc(var(--cut) - 0.41px), 100% 100%, 0 100%);
 }
 
 @keyframes toast-in {
