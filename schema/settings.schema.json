@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spuddeh.github.io/native-settings-builder/schema/settings.schema.json",
+  "title": "Native Settings Builder definition",
+  "type": "object",
+  "required": ["schemaVersion", "mod", "categories", "options"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "runtimeVersion": { "type": "string" },
+    "generator": {
+      "type": "object",
+      "properties": {
+        "site": { "type": "string" },
+        "siteVersion": { "type": "string" },
+        "exportedAt": { "type": "string" }
+      }
+    },
+    "mod": {
+      "type": "object",
+      "required": ["modName", "cetFolderName", "modVersion", "tabMode", "subCategoryPrefix"],
+      "properties": {
+        "modName": { "type": "string", "minLength": 1 },
+        "cetFolderName": { "type": "string", "pattern": "^[A-Za-z0-9_-]+$" },
+        "author": { "type": "string" },
+        "modVersion": { "type": "string" },
+        "tabMode": { "enum": ["own", "shared"] },
+        "ownTab": {
+          "type": "object",
+          "required": ["id", "label"],
+          "properties": {
+            "id": { "$ref": "#/$defs/slug" },
+            "label": { "type": "string", "minLength": 1 }
+          }
+        },
+        "sharedTab": {
+          "type": "object",
+          "required": ["id", "label"],
+          "properties": {
+            "id": { "$ref": "#/$defs/slug" },
+            "label": { "type": "string", "minLength": 1 },
+            "landingHeader": { "type": "string" }
+          }
+        },
+        "subCategoryPrefix": { "$ref": "#/$defs/slug" }
+      }
+    },
+    "categories": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "label"],
+        "properties": {
+          "id": { "$ref": "#/$defs/slug" },
+          "label": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "options": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/option" }
+    },
+    "translations": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ]
+        }
+      }
+    },
+    "compat": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ifArchive", "set", "once"],
+        "properties": {
+          "ifArchive": { "type": "string", "minLength": 1 },
+          "set": {
+            "type": "object",
+            "additionalProperties": {
+              "anyOf": [{ "type": "boolean" }, { "type": "number" }, { "type": "string" }]
+            }
+          },
+          "once": { "type": "boolean" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "slug": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+    "optionCommon": {
+      "type": "object",
+      "required": ["id", "type", "category", "label"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "category": { "$ref": "#/$defs/slug" },
+        "label": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "showInMenu": { "type": "boolean" }
+      }
+    },
+    "applyVariant": {
+      "type": "object",
+      "required": ["kind", "ref", "variant"],
+      "properties": {
+        "kind": { "const": "variant" },
+        "ref": { "type": "string", "minLength": 1 },
+        "variant": { "type": "string", "minLength": 1 }
+      }
+    },
+    "applySwap": {
+      "type": "object",
+      "required": ["kind", "ref", "variantOn", "variantOff"],
+      "properties": {
+        "kind": { "const": "swap" },
+        "ref": { "type": "string", "minLength": 1 },
+        "variantOn": { "type": "string", "minLength": 1 },
+        "variantOff": { "type": "string", "minLength": 1 }
+      }
+    },
+    "applySelectorVariant": {
+      "type": "object",
+      "required": ["kind", "ref", "variants"],
+      "properties": {
+        "kind": { "const": "selectorVariant" },
+        "ref": { "type": "string", "minLength": 1 },
+        "variants": { "type": "array", "minItems": 2, "items": { "type": "string" } }
+      }
+    },
+    "applyNif": {
+      "type": "object",
+      "required": ["kind", "project"],
+      "properties": {
+        "kind": { "const": "nif" },
+        "project": { "type": "string", "minLength": 1 }
+      }
+    },
+    "applyCallback": {
+      "type": "object",
+      "required": ["kind", "function", "lua"],
+      "properties": {
+        "kind": { "const": "callback" },
+        "function": { "$ref": "#/$defs/slug" },
+        "lua": { "type": "string" }
+      }
+    },
+    "option": {
+      "allOf": [{ "$ref": "#/$defs/optionCommon" }],
+      "oneOf": [
+        {
+          "properties": {
+            "type": { "const": "switch" },
+            "default": { "type": "boolean" },
+            "apply": {
+              "oneOf": [
+                { "$ref": "#/$defs/applyVariant" },
+                { "$ref": "#/$defs/applySwap" },
+                { "$ref": "#/$defs/applyNif" },
+                { "$ref": "#/$defs/applyCallback" }
+              ]
+            }
+          },
+          "required": ["default"]
+        },
+        {
+          "properties": {
+            "type": { "const": "rangeInt" },
+            "min": { "type": "number" },
+            "max": { "type": "number" },
+            "step": { "type": "number" },
+            "default": { "type": "number" },
+            "apply": { "$ref": "#/$defs/applyCallback" }
+          },
+          "required": ["min", "max", "step", "default"]
+        },
+        {
+          "properties": {
+            "type": { "const": "rangeFloat" },
+            "min": { "type": "number" },
+            "max": { "type": "number" },
+            "step": { "type": "number" },
+            "format": { "type": "string" },
+            "default": { "type": "number" },
+            "apply": { "$ref": "#/$defs/applyCallback" }
+          },
+          "required": ["min", "max", "step", "format", "default"]
+        },
+        {
+          "properties": {
+            "type": { "const": "selectorString" },
+            "elements": { "type": "array", "minItems": 2, "items": { "type": "string" } },
+            "default": { "type": "integer", "minimum": 1 },
+            "apply": {
+              "oneOf": [
+                { "$ref": "#/$defs/applySelectorVariant" },
+                { "$ref": "#/$defs/applyCallback" }
+              ]
+            }
+          },
+          "required": ["elements", "default"]
+        },
+        {
+          "properties": {
+            "type": { "const": "button" },
+            "buttonText": { "type": "string", "minLength": 1 },
+            "textSize": { "type": "number" },
+            "apply": { "$ref": "#/$defs/applyCallback" }
+          },
+          "required": ["buttonText", "apply"]
+        },
+        {
+          "properties": {
+            "type": { "const": "keyBinding" },
+            "default": { "type": "string", "pattern": "^IK_" },
+            "isHold": { "type": "boolean" },
+            "apply": { "$ref": "#/$defs/applyCallback" }
+          },
+          "required": ["default", "apply"]
+        }
+      ]
+    }
+  }
+}

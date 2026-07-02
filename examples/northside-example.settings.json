@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "runtimeVersion": "1.0.0",
+  "generator": {
+    "site": "native-settings-builder",
+    "siteVersion": "0.1.0",
+    "exportedAt": "2026-07-02T12:00:00.000Z"
+  },
+  "mod": {
+    "modName": "Northside Apartment",
+    "cetFolderName": "NorthsideApartment",
+    "author": "Example Author",
+    "modVersion": "1.0.0",
+    "tabMode": "shared",
+    "sharedTab": {
+      "id": "example_locations",
+      "label": "Example Locations",
+      "landingHeader": "Click a button to open each location's settings"
+    },
+    "subCategoryPrefix": "ns_apt"
+  },
+  "categories": [
+    { "id": "general", "label": "General" },
+    { "id": "furniture", "label": "Furniture" },
+    { "id": "exterior", "label": "Exterior" }
+  ],
+  "options": [
+    {
+      "id": "plant_decorations",
+      "type": "switch",
+      "category": "furniture",
+      "label": "Plant Decorations",
+      "description": "Toggle the plants on the balcony.",
+      "default": true,
+      "apply": {
+        "kind": "variant",
+        "ref": "$/example/northside/balcony",
+        "variant": "plants_on"
+      }
+    },
+    {
+      "id": "kitchen_style",
+      "type": "switch",
+      "category": "furniture",
+      "label": "Modern Kitchen",
+      "description": "Swap between the modern and retro kitchen.",
+      "default": false,
+      "apply": {
+        "kind": "swap",
+        "ref": "$/example/northside/kitchen",
+        "variantOn": "modern",
+        "variantOff": "retro"
+      }
+    },
+    {
+      "id": "sofa_color",
+      "type": "selectorString",
+      "category": "furniture",
+      "label": "Sofa Color",
+      "description": "Choose the sofa upholstery.",
+      "elements": ["Crimson", "Teal", "Charcoal"],
+      "default": 1,
+      "apply": {
+        "kind": "selectorVariant",
+        "ref": "$/example/northside/sofa",
+        "variants": ["sofa_red", "sofa_teal", "sofa_dark"]
+      }
+    },
+    {
+      "id": "light_intensity",
+      "type": "rangeFloat",
+      "category": "general",
+      "label": "Light Intensity",
+      "description": "Brightness multiplier read by the mod's own scripts.",
+      "min": 0,
+      "max": 2,
+      "step": 0.05,
+      "format": "%.2f",
+      "default": 1
+    },
+    {
+      "id": "guest_count",
+      "type": "rangeInt",
+      "category": "general",
+      "label": "NPC Guests",
+      "description": "How many guest NPCs to spawn.",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "id": "front_door_interactions",
+      "type": "switch",
+      "category": "exterior",
+      "label": "Front Door Interactions",
+      "description": "Enable the custom door prompts.",
+      "default": true,
+      "apply": {
+        "kind": "nif",
+        "project": "NorthsideFrontDoor"
+      }
+    },
+    {
+      "id": "teleport_home",
+      "type": "button",
+      "category": "general",
+      "label": "Teleport Home",
+      "description": "Instantly travel to the apartment.",
+      "buttonText": "Teleport",
+      "textSize": 45,
+      "apply": {
+        "kind": "callback",
+        "function": "teleport_home_pressed",
+        "lua": "Game.GetTeleportationFacility():Teleport(Game.GetPlayer(), Vector4.new(-1354.0, 2666.0, 27.0, 1.0), EulerAngles.new(0, 0, 90))"
+      }
+    },
+    {
+      "id": "toggle_radio_key",
+      "type": "keyBinding",
+      "category": "general",
+      "label": "Toggle Radio",
+      "description": "Hotkey to toggle the apartment radio.",
+      "default": "IK_F5",
+      "isHold": false,
+      "apply": {
+        "kind": "callback",
+        "function": "toggle_radio_key",
+        "lua": "print(\"[Northside Apartment] radio toggled\")"
+      }
+    }
+  ],
+  "translations": {
+    "fr-fr": {
+      "plant_decorations.label": "Plantes decoratives",
+      "plant_decorations.description": "Active les plantes du balcon.",
+      "categories.furniture": "Mobilier"
+    }
+  },
+  "compat": [
+    {
+      "ifArchive": "example_companion_mod.archive",
+      "set": { "kitchen_style": true },
+      "once": true
+    }
+  ]
+}
