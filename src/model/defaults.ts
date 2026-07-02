@@ -33,14 +33,14 @@ export function newDoc(): SettingsDoc {
       ownTab: { id: 'my_mod', label: 'My Mod' },
       subCategoryPrefix: 'My Mod',
     },
-    categories: [{ id: 'general', label: 'General' }],
+    subcategories: [{ id: 'general', label: 'General' }],
     options: [],
   }
 }
 
 /**
  * Converts an option to another widget type, keeping id, label, description,
- * section and visibility. Widget-specific fields reset to defaults; the effect
+ * subcategory and visibility. Widget-specific fields reset to defaults; the effect
  * survives when the new widget supports it (callbacks carry over, and buttons
  * and key bindings get one created if needed).
  */
@@ -48,7 +48,7 @@ export function convertOption(opt: SettingsOption, type: WidgetType): SettingsOp
   if (type === opt.type) return opt
   const base = {
     id: opt.id,
-    category: opt.category,
+    subcategory: opt.subcategory,
     label: opt.label,
     description: opt.description,
     showInMenu: opt.showInMenu,
@@ -89,13 +89,13 @@ export function convertOption(opt: SettingsOption, type: WidgetType): SettingsOp
 let optionCounter = 0
 
 /** A fresh option of the given widget type with sensible defaults. */
-export function newOption(type: WidgetType, category: string, existingIds: Set<string>): SettingsOption {
+export function newOption(type: WidgetType, subcategory: string, existingIds: Set<string>): SettingsOption {
   let id = `new_${type.toLowerCase()}`
   while (existingIds.has(id)) {
     optionCounter += 1
     id = `new_${type.toLowerCase()}_${optionCounter}`
   }
-  const base = { id, category, label: 'New option', description: '' }
+  const base = { id, subcategory, label: 'New option', description: '' }
   switch (type) {
     case 'switch':
       return { ...base, type, default: false }

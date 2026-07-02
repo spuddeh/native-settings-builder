@@ -7,7 +7,7 @@ export type Severity = 'error' | 'warning'
 export interface Issue {
   severity: Severity
   message: string
-  /** Focus target: 'mod' | 'category:<id>' | 'option:<id>' | 'translations' | 'compat:<index>' */
+  /** Focus target: 'mod' | 'subcategory:<id>' | 'option:<id>' | 'translations' | 'compat:<index>' */
   path: string
 }
 
@@ -21,7 +21,7 @@ function warn(path: string, message: string): Issue {
 
 const FOLDER_RE = /^[A-Za-z0-9_-]+$/
 
-function validateOption(opt: SettingsOption, categoryIds: Set<string>, issues: Issue[]) {
+function validateOption(opt: SettingsOption, subcategoryIds: Set<string>, issues: Issue[]) {
   const p = `option:${opt.id}`
   if (!SLUG_RE.test(opt.id)) {
     issues.push(err(p, `Option id "${opt.id}" must be lowercase letters, digits and underscores only`))
@@ -29,8 +29,8 @@ function validateOption(opt: SettingsOption, categoryIds: Set<string>, issues: I
   if (!opt.label.trim()) {
     issues.push(err(p, `Option "${opt.id}" needs a label`))
   }
-  if (!categoryIds.has(opt.category)) {
-    issues.push(err(p, `Option "${opt.id}" references missing category "${opt.category}"`))
+  if (!subcategoryIds.has(opt.subcategory)) {
+    issues.push(err(p, `Option "${opt.id}" references missing subcategory "${opt.subcategory}"`))
   }
 
   const legal = LEGAL_APPLY[opt.type]
@@ -57,16 +57,16 @@ function validateOption(opt: SettingsOption, categoryIds: Set<string>, issues: I
       break
     case 'selectorString':
       if (opt.elements.length < 2) {
-        issues.push(err(p, `Option "${opt.id}": a selector needs at least 2 entries`))
+        issues.push(err(p, `Option "${opt.id}": a String List needs at least 2 elements`))
       }
       if (opt.elements.some((e) => !e.trim())) {
-        issues.push(err(p, `Option "${opt.id}": selector entries cannot be empty`))
+        issues.push(err(p, `Option "${opt.id}": elements cannot be empty`))
       }
       if (new Set(opt.elements).size !== opt.elements.length) {
-        issues.push(err(p, `Option "${opt.id}": selector entries must be unique (they are the save keys)`))
+        issues.push(err(p, `Option "${opt.id}": elements must be unique (they are the save keys)`))
       }
       if (opt.default < 1 || opt.default > opt.elements.length) {
-        issues.push(err(p, `Option "${opt.id}": default choice is out of range`))
+        issues.push(err(p, `Option "${opt.id}": default element is out of range`))
       }
       break
     case 'keyBinding':
@@ -92,7 +92,7 @@ function validateOption(opt: SettingsOption, categoryIds: Set<string>, issues: I
     case 'selectorVariant':
       if (!apply.ref.trim()) issues.push(err(p, `Option "${opt.id}": variant selector needs a NodeRef`))
       if (opt.type === 'selectorString' && apply.variants.length !== opt.elements.length) {
-        issues.push(err(p, `Option "${opt.id}": one variant name is needed per selector entry (${apply.variants.length} of ${opt.elements.length})`))
+        issues.push(err(p, `Option "${opt.id}": one variant name is needed per element (${apply.variants.length} of ${opt.elements.length})`))
       }
       if (apply.variants.some((v) => !v.trim())) {
         issues.push(err(p, `Option "${opt.id}": variant names cannot be empty`))
@@ -147,15 +147,15 @@ export function validate(doc: SettingsDoc): Issue[] {
     }
   }
 
-  const categoryIds = new Set<string>()
-  for (const cat of doc.categories) {
-    const p = `category:${cat.id}`
-    if (!SLUG_RE.test(cat.id)) issues.push(err(p, `Category id "${cat.id}" must be lowercase letters, digits and underscores`))
-    if (categoryIds.has(cat.id)) issues.push(err(p, `Duplicate category id "${cat.id}"`))
-    if (!cat.label.trim()) issues.push(err(p, `Category "${cat.id}" needs a label`))
-    categoryIds.add(cat.id)
+  const subcategoryIds = new Set<string>()
+  for (const cat of doc.subcategories) {
+    const p = `subcategory:${cat.id}`
+    if (!SLUG_RE.test(cat.id)) issues.push(err(p, `Subcategory id "${cat.id}" must be lowercase letters, digits and underscores`))
+    if (subcategoryIds.has(cat.id)) issues.push(err(p, `Duplicate subcategory id "${cat.id}"`))
+    if (!cat.label.trim()) issues.push(err(p, `Subcategory "${cat.id}" needs a label`))
+    subcategoryIds.add(cat.id)
   }
-  if (doc.categories.length === 0) issues.push(err('mod', 'At least one category is required'))
+  if (doc.subcategories.length === 0) issues.push(err('mod', 'At least one subcategory is required'))
 
   const optionIds = new Set<string>()
   for (const opt of doc.options) {
@@ -163,7 +163,7 @@ export function validate(doc: SettingsDoc): Issue[] {
       issues.push(err(`option:${opt.id}`, `Duplicate option id "${opt.id}"`))
     }
     optionIds.add(opt.id)
-    validateOption(opt, categoryIds, issues)
+    validateOption(opt, subcategoryIds, issues)
   }
 
   const callbackNames = new Set<string>()
@@ -179,7 +179,7 @@ export function validate(doc: SettingsDoc): Issue[] {
   if (doc.translations) {
     for (const [lang, entries] of Object.entries(doc.translations)) {
       for (const key of Object.keys(entries)) {
-        const optionId = key.startsWith('categories.') || key.startsWith('mod.')
+        const optionId = key.startsWith('subcategories.') || key.startsWith('mod.')
           ? null
           : key.replace(/\.(label|description|buttonText|elements)$/, '')
         if (optionId !== null) {
@@ -188,8 +188,8 @@ export function validate(doc: SettingsDoc): Issue[] {
           } else if (!optionIds.has(optionId)) {
             issues.push(warn('translations', `Translation key "${key}" (${lang}) references unknown option "${optionId}"`))
           }
-        } else if (key.startsWith('categories.') && !categoryIds.has(key.slice('categories.'.length))) {
-          issues.push(warn('translations', `Translation key "${key}" (${lang}) references an unknown category`))
+        } else if (key.startsWith('subcategories.') && !subcategoryIds.has(key.slice('subcategories.'.length))) {
+          issues.push(warn('translations', `Translation key "${key}" (${lang}) references an unknown subcategory`))
         }
       }
     }

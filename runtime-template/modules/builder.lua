@@ -1,5 +1,5 @@
 -- builder.lua — turns the definition into Native Settings widgets.
--- Categories render in categories[] order and options in options[] order;
+-- Subcategories render in subcategories[] order and options in options[] order;
 -- iteration is always by array index, never pairs(), so ordering is stable.
 -- Part of the Native Settings Builder runtime v__RUNTIME_VERSION__. Do not edit.
 
@@ -14,8 +14,8 @@ local function slug(text)
     return (tostring(text):gsub("[^%w]+", "_"):lower())
 end
 
--- The section prefix is optional free text. Shown verbatim before section
--- labels in shared tabs; always sanitized when used in subcategory paths.
+-- The subcategory prefix is optional free text. Shown verbatim before
+-- subcategory labels in shared tabs; always sanitized when used in subcategory paths.
 local function displayPrefix(mod)
     if type(mod.subCategoryPrefix) == "string" and mod.subCategoryPrefix ~= "" then
         return mod.subCategoryPrefix
@@ -95,23 +95,23 @@ local function buildOptions(ns, ctx, tabPath)
     local labelPrefix = def.mod.tabMode == "shared" and displayPrefix(def.mod) or nil
     ctx.widgets = {}
 
-    for _, category in ipairs(def.categories) do
-        local subPath = tabPath .. "/" .. prefix .. "_" .. slug(category.id)
+    for _, subcategory in ipairs(def.subcategories) do
+        local subPath = tabPath .. "/" .. prefix .. "_" .. slug(subcategory.id)
         local hasVisibleOption = false
         for _, opt in ipairs(def.options) do
-            if opt.category == category.id and opt.showInMenu ~= false then
+            if opt.subcategory == subcategory.id and opt.showInMenu ~= false then
                 hasVisibleOption = true
                 break
             end
         end
         if hasVisibleOption then
-            local label = Lang.get("categories." .. category.id, category.label)
+            local label = Lang.get("subcategories." .. subcategory.id, subcategory.label)
             if labelPrefix then
                 label = Lang.get("mod.subCategoryPrefix", labelPrefix) .. " - " .. label
             end
             ns.addSubcategory(subPath, label)
             for _, opt in ipairs(def.options) do
-                if opt.category == category.id and opt.showInMenu ~= false then
+                if opt.subcategory == subcategory.id and opt.showInMenu ~= false then
                     local build = BUILDERS[opt.type]
                     if build then
                         ctx.widgets[opt.id] = build(ns, subPath, ctx, opt)

@@ -9,10 +9,10 @@ subcategories and shared tabs) is a recurring hurdle when shipping sector varian
 
 ## What it does
 
-- Form-based editor for the whole menu: sections, switches, sliders, selectors, buttons and
-  key bindings, with live validation.
+- Form-based editor for the whole menu: subcategories, toggles, sliders, string lists, buttons
+  and keybinds, with live validation.
 - Live preview styled after the in-game Mods settings screen.
-- Variant-aware: switches and selectors can directly toggle World Builder sector variants
+- Variant-aware: toggles and string lists can directly control World Builder sector variants
   (`TogglePrefabVariant`), swap between two variants, or toggle Native Interactions projects.
 - Exports a complete CET mod: a fixed, reusable Lua runtime plus your generated
   `settings.json` and a README with the correct dependency list.

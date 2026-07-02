@@ -39,7 +39,7 @@ end
 
 -- Looks up "<key>" in the current language's translation table, falling back to
 -- the inline string, then resolves LocKeys. Keys follow "<optionId>.label",
--- "<optionId>.description", "categories.<categoryId>", "mod.modName" etc.
+-- "<optionId>.description", "subcategories.<subcategoryId>", "mod.modName" etc.
 function Lang.get(key, fallback)
     local overlay = Lang.translations and Lang.translations[Lang.lang]
     local value = overlay and overlay[key]

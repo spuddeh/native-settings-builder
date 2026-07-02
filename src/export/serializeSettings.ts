@@ -2,13 +2,13 @@ import type { SettingsDoc } from '../model/schema'
 
 // Fixed key order per object level so re-exports diff cleanly.
 const KEY_ORDER: Record<string, string[]> = {
-  '': ['$schema', 'schemaVersion', 'runtimeVersion', 'generator', 'mod', 'categories', 'options', 'translations', 'compat'],
+  '': ['$schema', 'schemaVersion', 'runtimeVersion', 'generator', 'mod', 'subcategories', 'options', 'translations', 'compat'],
   generator: ['site', 'siteVersion', 'exportedAt'],
   mod: ['modName', 'cetFolderName', 'author', 'modVersion', 'tabMode', 'ownTab', 'sharedTab', 'subCategoryPrefix'],
   ownTab: ['id', 'label'],
   sharedTab: ['id', 'label', 'landingHeader'],
-  category: ['id', 'label'],
-  option: ['id', 'type', 'category', 'label', 'description', 'showInMenu', 'default',
+  subcategory: ['id', 'label'],
+  option: ['id', 'type', 'subcategory', 'label', 'description', 'showInMenu', 'default',
     'min', 'max', 'step', 'format', 'elements', 'buttonText', 'textSize', 'isHold', 'apply'],
   apply: ['kind', 'ref', 'variant', 'variantOn', 'variantOff', 'variants', 'project', 'function', 'lua'],
   compatRule: ['ifArchive', 'set', 'once'],
@@ -16,7 +16,7 @@ const KEY_ORDER: Record<string, string[]> = {
 
 function orderKeys(value: unknown, context: string): unknown {
   if (Array.isArray(value)) {
-    const childContext = context === 'categories' ? 'category'
+    const childContext = context === 'subcategories' ? 'subcategory'
       : context === 'options' ? 'option'
       : context === 'compat' ? 'compatRule'
       : context

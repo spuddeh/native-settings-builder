@@ -48,7 +48,7 @@ export type Apply = VariantApply | SwapApply | SelectorVariantApply | NifApply |
 interface OptionBase {
   id: string
   type: WidgetType
-  category: string
+  subcategory: string
   label: string
   description: string
   showInMenu?: boolean
@@ -111,7 +111,7 @@ export type SettingsOption =
   | ButtonOption
   | KeyBindingOption
 
-export interface Category {
+export interface Subcategory {
   id: string
   label: string
 }
@@ -124,8 +124,8 @@ export interface CompatRule {
 
 /**
  * Per-language string overrides. Keys: "<optionId>.label", "<optionId>.description",
- * "<optionId>.buttonText", "<optionId>.elements" (string[]), "categories.<categoryId>",
- * "mod.modName", "mod.ownTab.label".
+ * "<optionId>.buttonText", "<optionId>.elements" (string[]),
+ * "subcategories.<subcategoryId>", "mod.modName", "mod.ownTab.label".
  */
 export type Translations = Record<string, Record<string, string | string[]>>
 
@@ -152,19 +152,20 @@ export interface SettingsDoc {
   runtimeVersion: string
   generator: GeneratorInfo
   mod: ModMeta
-  categories: Category[]
+  subcategories: Subcategory[]
   options: SettingsOption[]
   translations?: Translations
   compat?: CompatRule[]
 }
 
+/** Widget names exactly as the Native Settings README calls them. */
 export const WIDGET_LABELS: Record<WidgetType, string> = {
-  switch: 'Switch (on/off)',
-  rangeInt: 'Slider (whole numbers)',
-  rangeFloat: 'Slider (decimals)',
-  selectorString: 'Selector (choose one)',
+  switch: 'Toggle',
+  rangeInt: 'Slider Int',
+  rangeFloat: 'Slider Float',
+  selectorString: 'String List',
   button: 'Button',
-  keyBinding: 'Key binding',
+  keyBinding: 'Keybind',
 }
 
 export const APPLY_LABELS: Record<ApplyKind, string> = {

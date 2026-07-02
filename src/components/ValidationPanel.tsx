@@ -4,7 +4,7 @@ import type { Issue } from '../model/validate'
 export function ValidationPanel({ issues }: { issues: Issue[] }) {
   const doc = useProjectStore((s) => s.doc)
   const selectOption = useProjectStore((s) => s.selectOption)
-  const selectCategory = useProjectStore((s) => s.selectCategory)
+  const selectSubcategory = useProjectStore((s) => s.selectSubcategory)
 
   const errors = issues.filter((i) => i.severity === 'error').length
   const warnings = issues.length - errors
@@ -14,11 +14,11 @@ export function ValidationPanel({ issues }: { issues: Issue[] }) {
       const id = issue.path.slice('option:'.length)
       const opt = doc.options.find((o) => o.id === id)
       if (opt) {
-        selectCategory(opt.category)
+        selectSubcategory(opt.subcategory)
         selectOption(id)
       }
-    } else if (issue.path.startsWith('category:')) {
-      selectCategory(issue.path.slice('category:'.length))
+    } else if (issue.path.startsWith('subcategory:')) {
+      selectSubcategory(issue.path.slice('subcategory:'.length))
     }
   }
 

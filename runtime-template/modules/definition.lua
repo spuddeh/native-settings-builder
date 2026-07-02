@@ -54,8 +54,8 @@ function Definition.validate(def)
     if def.mod.tabMode == "shared" and (type(def.mod.sharedTab) ~= "table" or type(def.mod.sharedTab.id) ~= "string") then
         return false, "mod.sharedTab.id missing (required for tabMode 'shared')"
     end
-    if type(def.categories) ~= "table" then
-        return false, "missing 'categories' array"
+    if type(def.subcategories) ~= "table" then
+        return false, "missing 'subcategories' array"
     end
     if type(def.options) ~= "table" then
         return false, "missing 'options' array"
@@ -75,8 +75,8 @@ function Definition.validate(def)
         if not KNOWN_TYPES[opt.type] then
             return false, where .. " has unknown type '" .. tostring(opt.type) .. "'"
         end
-        if type(opt.category) ~= "string" then
-            return false, where .. " missing 'category'"
+        if type(opt.subcategory) ~= "string" then
+            return false, where .. " missing 'subcategory'"
         end
         if opt.type == "selectorString" and (type(opt.elements) ~= "table" or #opt.elements < 2) then
             return false, where .. " needs at least 2 elements"

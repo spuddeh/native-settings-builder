@@ -74,10 +74,10 @@ export function OptionEditor() {
       />
       <div className="row">
         <SelectField
-          label="Section"
-          value={opt.category}
-          onChange={(category) => update({ ...opt, category })}
-          options={doc.categories.map((c) => ({ value: c.id, label: c.label }))}
+          label="Subcategory"
+          value={opt.subcategory}
+          onChange={(subcategory) => update({ ...opt, subcategory })}
+          options={doc.subcategories.map((c) => ({ value: c.id, label: c.label }))}
         />
         <SelectField
           label="Widget"
@@ -188,7 +188,7 @@ function SelectorElements({ opt, update }: { opt: SelectorStringOption; update: 
 
   return (
     <div className="field">
-      <span className="field-label">Choices</span>
+      <span className="field-label">Elements</span>
       {opt.elements.map((el, i) => (
         <div className="row" key={i} style={{ marginBottom: 6 }}>
           <input type="text" value={el} onChange={(e) => {
@@ -216,9 +216,9 @@ function SelectorElements({ opt, update }: { opt: SelectorStringOption; update: 
         </div>
       ))}
       <button onClick={() => setElements([...opt.elements, `Option ${String.fromCharCode(65 + opt.elements.length)}`])}>
-        Add choice
+        Add element
       </button>
-      <div className="hint">Choice texts are also the save keys; renaming one resets saved player choices for it.</div>
+      <div className="hint">Element texts are also the save keys; renaming one resets saved player choices for it.</div>
     </div>
   )
 }

@@ -19,7 +19,7 @@
     },
     "subCategoryPrefix": "Northside"
   },
-  "categories": [
+  "subcategories": [
     { "id": "general", "label": "General" },
     { "id": "furniture", "label": "Furniture" },
     { "id": "exterior", "label": "Exterior" }
@@ -28,7 +28,7 @@
     {
       "id": "plant_decorations",
       "type": "switch",
-      "category": "furniture",
+      "subcategory": "furniture",
       "label": "Plant Decorations",
       "description": "Toggle the plants on the balcony.",
       "default": true,
@@ -41,7 +41,7 @@
     {
       "id": "kitchen_style",
       "type": "switch",
-      "category": "furniture",
+      "subcategory": "furniture",
       "label": "Modern Kitchen",
       "description": "Swap between the modern and retro kitchen.",
       "default": false,
@@ -55,7 +55,7 @@
     {
       "id": "sofa_color",
       "type": "selectorString",
-      "category": "furniture",
+      "subcategory": "furniture",
       "label": "Sofa Color",
       "description": "Choose the sofa upholstery.",
       "elements": ["Crimson", "Teal", "Charcoal"],
@@ -69,7 +69,7 @@
     {
       "id": "light_intensity",
       "type": "rangeFloat",
-      "category": "general",
+      "subcategory": "general",
       "label": "Light Intensity",
       "description": "Brightness multiplier read by the mod's own scripts.",
       "min": 0,
@@ -81,7 +81,7 @@
     {
       "id": "guest_count",
       "type": "rangeInt",
-      "category": "general",
+      "subcategory": "general",
       "label": "NPC Guests",
       "description": "How many guest NPCs to spawn.",
       "min": 0,
@@ -92,7 +92,7 @@
     {
       "id": "front_door_interactions",
       "type": "switch",
-      "category": "exterior",
+      "subcategory": "exterior",
       "label": "Front Door Interactions",
       "description": "Enable the custom door prompts.",
       "default": true,
@@ -104,7 +104,7 @@
     {
       "id": "teleport_home",
       "type": "button",
-      "category": "general",
+      "subcategory": "general",
       "label": "Teleport Home",
       "description": "Instantly travel to the apartment.",
       "buttonText": "Teleport",
@@ -118,7 +118,7 @@
     {
       "id": "toggle_radio_key",
       "type": "keyBinding",
-      "category": "general",
+      "subcategory": "general",
       "label": "Toggle Radio",
       "description": "Hotkey to toggle the apartment radio.",
       "default": "IK_F5",
@@ -134,7 +134,7 @@
     "fr-fr": {
       "plant_decorations.label": "Plantes decoratives",
       "plant_decorations.description": "Active les plantes du balcon.",
-      "categories.furniture": "Mobilier"
+      "subcategories.furniture": "Mobilier"
     }
   },
   "compat": [

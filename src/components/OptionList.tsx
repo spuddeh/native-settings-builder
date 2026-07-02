@@ -5,26 +5,26 @@ import { WIDGET_LABELS } from '../model/schema'
 import type { Issue } from '../model/validate'
 
 const TYPE_CHIPS: Record<WidgetType, string> = {
-  switch: 'switch',
-  rangeInt: 'slider',
-  rangeFloat: 'slider',
-  selectorString: 'selector',
+  switch: 'toggle',
+  rangeInt: 'slider int',
+  rangeFloat: 'slider float',
+  selectorString: 'string list',
   button: 'button',
   keyBinding: 'keybind',
 }
 
 export function OptionList(props: { issues: Issue[] }) {
   const doc = useProjectStore((s) => s.doc)
-  const selectedCategoryId = useProjectStore((s) => s.selectedCategoryId)
+  const selectedSubcategoryId = useProjectStore((s) => s.selectedSubcategoryId)
   const selectedOptionId = useProjectStore((s) => s.selectedOptionId)
   const { addOption, moveOption, duplicateOption, removeOption, selectOption } = useProjectStore()
   const [newType, setNewType] = useState<WidgetType>('switch')
 
-  if (!selectedCategoryId || !doc.categories.some((c) => c.id === selectedCategoryId)) {
-    return <div className="empty-state">Select a section above to edit its options.</div>
+  if (!selectedSubcategoryId || !doc.subcategories.some((c) => c.id === selectedSubcategoryId)) {
+    return <div className="empty-state">Select a subcategory above to edit its options.</div>
   }
 
-  const options = doc.options.filter((o) => o.category === selectedCategoryId)
+  const options = doc.options.filter((o) => o.subcategory === selectedSubcategoryId)
 
   const worstFor = (id: string): 'error' | 'warning' | null => {
     const relevant = props.issues.filter((i) => i.path === `option:${id}`)
@@ -37,7 +37,7 @@ export function OptionList(props: { issues: Issue[] }) {
     <div>
       {options.length === 0 && (
         <div className="empty-state">
-          <strong>This section is empty.</strong> Pick a widget type below and press Add option;
+          <strong>This subcategory is empty.</strong> Pick a widget type below and press Add option;
           it appears in the preview immediately.
         </div>
       )}
@@ -78,7 +78,7 @@ export function OptionList(props: { issues: Issue[] }) {
             <option key={t} value={t}>{WIDGET_LABELS[t]}</option>
           ))}
         </select>
-        <button style={{ flex: '0 0 auto' }} onClick={() => addOption(newType, selectedCategoryId)}>
+        <button style={{ flex: '0 0 auto' }} onClick={() => addOption(newType, selectedSubcategoryId)}>
           Add option
         </button>
       </div>

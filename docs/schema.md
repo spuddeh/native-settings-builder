@@ -11,8 +11,8 @@ A machine-readable JSON Schema is published at `schema/settings.schema.json`.
 | `runtimeVersion` | string | The runtime bundled by the export that produced this file |
 | `generator` | object | `site`, `siteVersion`, `exportedAt` (informational) |
 | `mod` | object | Mod metadata, see below |
-| `categories` | array | Ordered list of `{ id, label }`; render order is array order |
-| `options` | array | Ordered list of options; render order is array order within each category |
+| `subcategories` | array | Ordered list of `{ id, label }`; render order is array order |
+| `options` | array | Ordered list of options; render order is array order within each subcategory |
 | `translations` | object, optional | Per-language string overrides, see below |
 | `compat` | array, optional | Mod compatibility rules, see below |
 
@@ -27,7 +27,7 @@ A machine-readable JSON Schema is published at `schema/settings.schema.json`.
 | `tabMode` | `"own"` or `"shared"` | |
 | `ownTab` | `{ id, label }` | Required when `tabMode` is `own` |
 | `sharedTab` | `{ id, label, landingHeader? }` | Required when `tabMode` is `shared`; the id must be identical in every mod of the family |
-| `subCategoryPrefix` | string, optional | Free text. In shared tabs it is shown before every section label ("Glen - Main" style). A sanitized form of it (or of the folder name, when empty) also prefixes subcategory paths so mods never collide in a shared tab |
+| `subCategoryPrefix` | string, optional | Free text. In shared tabs it is shown before every subcategory label ("Glen - Main" style). A sanitized form of it (or of the folder name, when empty) also prefixes subcategory paths so mods never collide in a shared tab |
 
 ## Options
 
@@ -36,17 +36,20 @@ the optional **effect** (`apply`) that runs when the value changes. An option wi
 plain value your own scripts can read through the runtime API.
 
 Common fields: `id` (stable unique save key, `^[a-z0-9_]+$`, never change it after release),
-`type`, `category`, `label`, `description`, `showInMenu` (default true; false hides the option so
-it is only reachable via the API or compat rules).
+`type`, `subcategory`, `label`, `description`, `showInMenu` (default true; false hides the option
+so it is only reachable via the API or compat rules).
 
-| `type` | Extra fields | `default` |
-|--------|--------------|-----------|
-| `switch` | | boolean |
-| `rangeInt` | `min`, `max`, `step` | number |
-| `rangeFloat` | `min`, `max`, `step`, `format` (e.g. `"%.2f"`) | number |
-| `selectorString` | `elements` (2+ strings) | 1-based index |
-| `button` | `buttonText`, `textSize` (45 is the vanilla look) | none |
-| `keyBinding` | `isHold` | `IK_*` key name |
+The `type` values match the Native Settings API function names; the "widget" column shows what
+the Native Settings README calls each one.
+
+| `type` | Widget | Extra fields | `default` |
+|--------|--------|--------------|-----------|
+| `switch` | Toggle | | boolean |
+| `rangeInt` | Slider Int | `min`, `max`, `step` | number |
+| `rangeFloat` | Slider Float | `min`, `max`, `step`, `format` (e.g. `"%.2f"`) | number |
+| `selectorString` | String List | `elements` (2+ strings) | 1-based element index |
+| `button` | Button | `buttonText`, `textSize` (45 is the vanilla look) | none |
+| `keyBinding` | Keybind | `isHold` | `IK_*` key name |
 
 ## Effects (`apply`)
 
@@ -82,7 +85,7 @@ strings in the document are the English defaults. Keys:
 - `<optionId>.label`, `<optionId>.description`, `<optionId>.buttonText`
 - `<optionId>.elements`: a full replacement array for a selector's choices (display only; save
   keys stay the English strings)
-- `categories.<categoryId>`, `mod.modName`, `mod.ownTab.label`
+- `subcategories.<subcategoryId>`, `mod.modName`, `mod.ownTab.label`
 
 Independently of this block, any string starting with `LocKey#` is resolved through the game's
 own localization at menu build time.

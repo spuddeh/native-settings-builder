@@ -46,14 +46,14 @@ export function importDoc(text: string): SettingsDoc {
   expect(typeof mod === 'object' && mod !== null, 'Missing "mod" block')
   expect(typeof mod.modName === 'string', 'Missing "mod.modName"')
   expect(mod.tabMode === 'own' || mod.tabMode === 'shared', '"mod.tabMode" must be "own" or "shared"')
-  expect(Array.isArray(doc.categories), 'Missing "categories" array')
+  expect(Array.isArray(doc.subcategories), 'Missing "subcategories" array')
   expect(Array.isArray(doc.options), 'Missing "options" array')
   ;(doc.options as unknown[]).forEach((opt, i) => {
     expect(typeof opt === 'object' && opt !== null, `options[${i}] is not an object`)
     const o = opt as Record<string, unknown>
     expect(typeof o.id === 'string' && o.id !== '', `options[${i}] missing "id"`)
     expect(typeof o.type === 'string', `options[${i}] ("${o.id}") missing "type"`)
-    expect(typeof o.category === 'string', `options[${i}] ("${o.id}") missing "category"`)
+    expect(typeof o.subcategory === 'string', `options[${i}] ("${o.id}") missing "subcategory"`)
   })
 
   return doc as unknown as SettingsDoc

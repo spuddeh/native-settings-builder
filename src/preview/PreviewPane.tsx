@@ -19,7 +19,7 @@ export function PreviewPane() {
   const doc = useProjectStore((s) => s.doc)
   const selectedOptionId = useProjectStore((s) => s.selectedOptionId)
   const selectOption = useProjectStore((s) => s.selectOption)
-  const selectCategory = useProjectStore((s) => s.selectCategory)
+  const selectSubcategory = useProjectStore((s) => s.selectSubcategory)
   const [values, setValues] = useState<PreviewValues>(() => defaults(doc))
   const [view, setView] = useState<'landing' | 'detail'>(doc.mod.tabMode === 'shared' ? 'landing' : 'detail')
 
@@ -44,7 +44,7 @@ export function PreviewPane() {
   }, [selectedOptionId])
 
   const focusOption = (opt: SettingsOption) => {
-    selectCategory(opt.category)
+    selectSubcategory(opt.subcategory)
     selectOption(opt.id)
   }
 
@@ -82,8 +82,8 @@ export function PreviewPane() {
                 <button className="cp-button" onClick={() => setView('landing')}>Back</button>
               </Row>
             )}
-            {doc.categories.map((cat) => {
-              const options = visible.filter((o) => o.category === cat.id)
+            {doc.subcategories.map((cat) => {
+              const options = visible.filter((o) => o.subcategory === cat.id)
               if (options.length === 0) return null
               return (
                 <div key={cat.id}>

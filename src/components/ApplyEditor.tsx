@@ -115,10 +115,10 @@ function ApplyFields({ opt, update }: { opt: SettingsOption; update: (o: Setting
             placeholder="$/yourname/your_location/variants"
           />
           <div className="field">
-            <span className="field-label">Variant name per choice</span>
+            <span className="field-label">Variant name per element</span>
             {opt.elements.map((el, i) => (
               <div className="row" key={i} style={{ marginBottom: 6, alignItems: 'center' }}>
-                <span style={{ flex: '0 0 40%' }} className="dim">{el || `(choice ${i + 1})`}</span>
+                <span style={{ flex: '0 0 40%' }} className="dim">{el || `(element ${i + 1})`}</span>
                 <input
                   type="text"
                   style={{ fontFamily: 'Consolas, monospace', fontSize: 14 }}

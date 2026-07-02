@@ -37,7 +37,7 @@ edit would reset saved values (changing an id, renaming selector choices).
 
 ## Testing checklist
 
-- Open Settings, then Mods: the tab appears, sections are in order, tooltips read well.
+- Open Settings, then Mods: the tab appears, subcategories are in order, tooltips read well.
 - Change each option; verify the world reacts (variants) and `config.json` updates.
 - Restart the game and reload a save: choices persist and re-apply.
 - Press the game's restore defaults button: options, config and world all reset.

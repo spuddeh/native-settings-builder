@@ -6,7 +6,7 @@ import { importDoc } from './model/migrate'
 import { RUNTIME_VERSION, SITE_VERSION } from './model/defaults'
 import { Section } from './components/fields'
 import { MetadataForm } from './components/MetadataForm'
-import { CategoryList } from './components/CategoryList'
+import { SubcategoryList } from './components/SubcategoryList'
 import { OptionList } from './components/OptionList'
 import { OptionEditor } from './components/OptionEditor'
 import { TranslationsEditor } from './components/TranslationsEditor'
@@ -51,7 +51,7 @@ export default function App() {
       const select = params.get('select')
       const target = example.options.find((o) => o.id === select)
       if (target) {
-        useProjectStore.getState().selectCategory(target.category)
+        useProjectStore.getState().selectSubcategory(target.subcategory)
         useProjectStore.getState().selectOption(target.id)
       }
       return
@@ -101,8 +101,8 @@ export default function App() {
           <Section title="Mod setup" open={open.mod} onToggle={() => toggle('mod')}>
             <MetadataForm />
           </Section>
-          <Section title="Sections" open={open.sections} onToggle={() => toggle('sections')} badge={String(doc.categories.length)}>
-            <CategoryList issues={issues} />
+          <Section title="Subcategories" open={open.sections} onToggle={() => toggle('sections')} badge={String(doc.subcategories.length)}>
+            <SubcategoryList issues={issues} />
           </Section>
           <Section title="Options" open={open.options} onToggle={() => toggle('options')} badge={String(doc.options.length)}>
             <OptionList issues={issues} />

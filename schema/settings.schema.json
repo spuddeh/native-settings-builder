@@ -3,7 +3,7 @@
   "$id": "https://spuddeh.github.io/native-settings-builder/schema/settings.schema.json",
   "title": "Native Settings Builder definition",
   "type": "object",
-  "required": ["schemaVersion", "mod", "categories", "options"],
+  "required": ["schemaVersion", "mod", "subcategories", "options"],
   "properties": {
     "$schema": { "type": "string" },
     "schemaVersion": { "const": 1 },
@@ -45,7 +45,7 @@
         "subCategoryPrefix": { "type": "string" }
       }
     },
-    "categories": {
+    "subcategories": {
       "type": "array",
       "minItems": 1,
       "items": {
@@ -95,10 +95,10 @@
     "slug": { "type": "string", "pattern": "^[a-z0-9_]+$" },
     "optionCommon": {
       "type": "object",
-      "required": ["id", "type", "category", "label"],
+      "required": ["id", "type", "subcategory", "label"],
       "properties": {
         "id": { "$ref": "#/$defs/slug" },
-        "category": { "$ref": "#/$defs/slug" },
+        "subcategory": { "$ref": "#/$defs/slug" },
         "label": { "type": "string", "minLength": 1 },
         "description": { "type": "string" },
         "showInMenu": { "type": "boolean" }

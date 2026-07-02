@@ -1,12 +1,12 @@
 import { create } from 'zustand'
-import type { Category, CompatRule, ModMeta, SettingsDoc, SettingsOption, WidgetType } from '../model/schema'
+import type { Subcategory, CompatRule, ModMeta, SettingsDoc, SettingsOption, WidgetType } from '../model/schema'
 import { newDoc, newOption } from '../model/defaults'
 
 interface ProjectState {
   doc: SettingsDoc
   /** id of the option currently open in the editor drawer, if any */
   selectedOptionId: string | null
-  selectedCategoryId: string | null
+  selectedSubcategoryId: string | null
 
   loadDoc: (doc: SettingsDoc) => void
   resetDoc: () => void
@@ -14,19 +14,19 @@ interface ProjectState {
   setTranslations: (translations: SettingsDoc['translations']) => void
   setCompat: (compat: CompatRule[] | undefined) => void
 
-  addCategory: (label: string) => void
-  updateCategory: (id: string, patch: Partial<Category>) => void
-  moveCategory: (id: string, delta: number) => void
-  removeCategory: (id: string, moveOptionsTo: string | null) => void
+  addSubcategory: (label: string) => void
+  updateSubcategory: (id: string, patch: Partial<Subcategory>) => void
+  moveSubcategory: (id: string, delta: number) => void
+  removeSubcategory: (id: string, moveOptionsTo: string | null) => void
 
-  addOption: (type: WidgetType, category: string) => void
+  addOption: (type: WidgetType, subcategory: string) => void
   updateOption: (id: string, next: SettingsOption) => void
   moveOption: (id: string, delta: number) => void
   duplicateOption: (id: string) => void
   removeOption: (id: string) => void
 
   selectOption: (id: string | null) => void
-  selectCategory: (id: string | null) => void
+  selectSubcategory: (id: string | null) => void
 }
 
 function moveInArray<T>(arr: T[], from: number, to: number): T[] {
@@ -40,16 +40,16 @@ function moveInArray<T>(arr: T[], from: number, to: number): T[] {
 export const useProjectStore = create<ProjectState>((set) => ({
   doc: newDoc(),
   selectedOptionId: null,
-  selectedCategoryId: 'general',
+  selectedSubcategoryId: 'general',
 
   loadDoc: (doc) =>
     set({
       doc,
       selectedOptionId: null,
-      selectedCategoryId: doc.categories[0]?.id ?? null,
+      selectedSubcategoryId: doc.subcategories[0]?.id ?? null,
     }),
 
-  resetDoc: () => set({ doc: newDoc(), selectedOptionId: null, selectedCategoryId: 'general' }),
+  resetDoc: () => set({ doc: newDoc(), selectedOptionId: null, selectedSubcategoryId: 'general' }),
 
   setMod: (patch) =>
     set((s) => ({ doc: { ...s.doc, mod: { ...s.doc.mod, ...patch } } })),
@@ -60,52 +60,52 @@ export const useProjectStore = create<ProjectState>((set) => ({
   setCompat: (compat) =>
     set((s) => ({ doc: { ...s.doc, compat } })),
 
-  addCategory: (label) =>
+  addSubcategory: (label) =>
     set((s) => {
-      const base = label.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'category'
+      const base = label.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'subcategory'
       let id = base
       let n = 1
-      while (s.doc.categories.some((c) => c.id === id)) {
+      while (s.doc.subcategories.some((c) => c.id === id)) {
         n += 1
         id = `${base}_${n}`
       }
       return {
-        doc: { ...s.doc, categories: [...s.doc.categories, { id, label }] },
-        selectedCategoryId: id,
+        doc: { ...s.doc, subcategories: [...s.doc.subcategories, { id, label }] },
+        selectedSubcategoryId: id,
       }
     }),
 
-  updateCategory: (id, patch) =>
+  updateSubcategory: (id, patch) =>
     set((s) => ({
       doc: {
         ...s.doc,
-        categories: s.doc.categories.map((c) => (c.id === id ? { ...c, ...patch } : c)),
+        subcategories: s.doc.subcategories.map((c) => (c.id === id ? { ...c, ...patch } : c)),
       },
     })),
 
-  moveCategory: (id, delta) =>
+  moveSubcategory: (id, delta) =>
     set((s) => {
-      const idx = s.doc.categories.findIndex((c) => c.id === id)
+      const idx = s.doc.subcategories.findIndex((c) => c.id === id)
       if (idx === -1) return s
-      return { doc: { ...s.doc, categories: moveInArray(s.doc.categories, idx, idx + delta) } }
+      return { doc: { ...s.doc, subcategories: moveInArray(s.doc.subcategories, idx, idx + delta) } }
     }),
 
-  removeCategory: (id, moveOptionsTo) =>
+  removeSubcategory: (id, moveOptionsTo) =>
     set((s) => {
-      const categories = s.doc.categories.filter((c) => c.id !== id)
+      const subcategories = s.doc.subcategories.filter((c) => c.id !== id)
       const options = moveOptionsTo
-        ? s.doc.options.map((o) => (o.category === id ? { ...o, category: moveOptionsTo } : o))
-        : s.doc.options.filter((o) => o.category !== id)
+        ? s.doc.options.map((o) => (o.subcategory === id ? { ...o, subcategory: moveOptionsTo } : o))
+        : s.doc.options.filter((o) => o.subcategory !== id)
       return {
-        doc: { ...s.doc, categories, options },
-        selectedCategoryId: categories[0]?.id ?? null,
+        doc: { ...s.doc, subcategories, options },
+        selectedSubcategoryId: subcategories[0]?.id ?? null,
         selectedOptionId: null,
       }
     }),
 
-  addOption: (type, category) =>
+  addOption: (type, subcategory) =>
     set((s) => {
-      const option = newOption(type, category, new Set(s.doc.options.map((o) => o.id)))
+      const option = newOption(type, subcategory, new Set(s.doc.options.map((o) => o.id)))
       return {
         doc: { ...s.doc, options: [...s.doc.options, option] },
         selectedOptionId: option.id,
@@ -122,8 +122,8 @@ export const useProjectStore = create<ProjectState>((set) => ({
     set((s) => {
       const option = s.doc.options.find((o) => o.id === id)
       if (!option) return s
-      // Move within the option's own category while keeping the global array order stable.
-      const siblings = s.doc.options.filter((o) => o.category === option.category)
+      // Move within the option's own subcategory while keeping the global array order stable.
+      const siblings = s.doc.options.filter((o) => o.subcategory === option.subcategory)
       const sibIdx = siblings.findIndex((o) => o.id === id)
       const targetSib = siblings[sibIdx + delta]
       if (!targetSib) return s
@@ -161,5 +161,5 @@ export const useProjectStore = create<ProjectState>((set) => ({
     })),
 
   selectOption: (id) => set({ selectedOptionId: id }),
-  selectCategory: (id) => set({ selectedCategoryId: id, selectedOptionId: null }),
+  selectSubcategory: (id) => set({ selectedSubcategoryId: id, selectedOptionId: null }),
 }))

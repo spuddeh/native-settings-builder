@@ -55,10 +55,10 @@ export function MetadataForm() {
         />
       </div>
       <TextField
-        label="Section prefix (optional)"
+        label="Subcategory prefix (optional)"
         value={mod.subCategoryPrefix}
         onChange={(subCategoryPrefix) => setMod({ subCategoryPrefix })}
-        hint='Shown before section names in a shared tab, e.g. "Glen - Main". Also keeps section paths unique between mods. Leave empty to skip.'
+        hint='Shown before subcategory labels in a shared tab, e.g. "Glen - Main". Also keeps subcategory paths unique between mods. Leave empty to skip.'
       />
       <SelectField
         label="Tab mode"

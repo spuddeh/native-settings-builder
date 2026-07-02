@@ -17,7 +17,7 @@ export function TranslationsEditor() {
 
   const suggestedKeys = [
     'mod.modName',
-    ...doc.categories.map((c) => `categories.${c.id}`),
+    ...doc.subcategories.map((c) => `subcategories.${c.id}`),
     ...doc.options.flatMap((o) => [`${o.id}.label`, `${o.id}.description`]),
   ]
 
