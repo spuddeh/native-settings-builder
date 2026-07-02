@@ -21,7 +21,7 @@ export function OptionList(props: { issues: Issue[] }) {
   const [newType, setNewType] = useState<WidgetType>('switch')
 
   if (!selectedCategoryId || !doc.categories.some((c) => c.id === selectedCategoryId)) {
-    return <p className="muted">Select a section above to edit its options.</p>
+    return <div className="empty-state">Select a section above to edit its options.</div>
   }
 
   const options = doc.options.filter((o) => o.category === selectedCategoryId)
@@ -35,7 +35,12 @@ export function OptionList(props: { issues: Issue[] }) {
 
   return (
     <div>
-      {options.length === 0 && <p className="muted">No options in this section yet.</p>}
+      {options.length === 0 && (
+        <div className="empty-state">
+          <strong>This section is empty.</strong> Pick a widget type below and press Add option;
+          it appears in the preview immediately.
+        </div>
+      )}
       {options.map((opt, i) => {
         const dot = worstFor(opt.id)
         return (

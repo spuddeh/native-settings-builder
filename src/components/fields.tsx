@@ -1,4 +1,24 @@
-import type { ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
+
+/** Modal shell: backdrop click and Escape both close. */
+export function Dialog(props: { title: string; onClose: () => void; children: ReactNode }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') props.onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  return (
+    <div className="dialog-backdrop" onClick={props.onClose}>
+      <div className="dialog" onClick={(e) => e.stopPropagation()}>
+        <h2>{props.title}</h2>
+        {props.children}
+      </div>
+    </div>
+  )
+}
 
 export function TextField(props: {
   label: string
@@ -90,8 +110,8 @@ export function Section(props: {
     <div className="section">
       <div className="section-head" onClick={props.onToggle}>
         <h2>{props.title}</h2>
-        {props.badge && <span className="type-chip">{props.badge}</span>}
-        <span className="muted">{props.open ? '▾' : '▸'}</span>
+        {props.badge && <span className="section-chip">{props.badge}</span>}
+        <span className="caret">{props.open ? '▼' : '▶'}</span>
       </div>
       {props.open && <div className="section-body">{props.children}</div>}
     </div>

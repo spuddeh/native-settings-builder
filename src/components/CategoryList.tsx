@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useProjectStore } from '../state/store'
 import type { Issue } from '../model/validate'
+import { Dialog } from './fields'
 
 export function CategoryList(props: { issues: Issue[] }) {
   const categories = useProjectStore((s) => s.doc.categories)
@@ -97,9 +98,8 @@ function DeleteCategoryDialog(props: {
 
   if (!category) return null
   return (
-    <div className="dialog-backdrop" onClick={props.onClose}>
-      <div className="dialog" onClick={(e) => e.stopPropagation()}>
-        <h2>Delete section "{category.label}"</h2>
+    <Dialog title={`Delete section "${category.label}"`} onClose={props.onClose}>
+      <>
         {count > 0 ? (
           <>
             <p>
@@ -126,7 +126,7 @@ function DeleteCategoryDialog(props: {
             Delete
           </button>
         </div>
-      </div>
-    </div>
+      </>
+    </Dialog>
   )
 }

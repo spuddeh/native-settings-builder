@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useProjectStore } from '../state/store'
 import type { SelectorStringOption, SettingsOption } from '../model/schema'
 import { WIDGET_LABELS } from '../model/schema'
@@ -12,15 +12,28 @@ export function OptionEditor() {
   const updateOption = useProjectStore((s) => s.updateOption)
   const [editingId, setEditingId] = useState(false)
 
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  // Bring the editor into view when an option is picked (list or preview click).
+  useEffect(() => {
+    if (selectedOptionId) {
+      scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }
+  }, [selectedOptionId])
+
   const opt = doc.options.find((o) => o.id === selectedOptionId)
   if (!opt) {
-    return <p className="muted">Select an option above to edit it.</p>
+    return (
+      <div className="empty-state" ref={scrollRef}>
+        Pick an option from the list above, or click a row in the preview, to edit it here.
+      </div>
+    )
   }
 
   const update = (next: SettingsOption) => updateOption(opt.id, next)
 
   return (
-    <div>
+    <div ref={scrollRef}>
       <div className="row" style={{ alignItems: 'flex-end' }}>
         <TextField label="Label" value={opt.label} onChange={(label) => update({ ...opt, label })} />
         <div className="field" style={{ flex: 1 }}>

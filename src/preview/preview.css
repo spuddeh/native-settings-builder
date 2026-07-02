@@ -1,106 +1,137 @@
-/* CP2077 in-game settings look, plain CSS, no assets. */
+/*
+ * Faithful recreation of the in-game Native Settings (Mods) screen.
+ * Reference: the game's settings UI — red labels and frames, cyan values and
+ * selection, deep maroon-black background, chamfered widget frames, subtle
+ * chromatic fringing and scanlines.
+ */
 
 .cp-pane {
-  --cp-bg: #0d0d12;
-  --cp-panel: #16161d;
-  --cp-red: #f75049;
-  --cp-red-dim: #7a1f1e;
-  --cp-cyan: #5ef6ff;
-  --cp-teal: #49c4d4;
-  --cp-text: #d8d8d3;
-  --cp-text-dim: #8a8f98;
-  --cp-line: #2a2a33;
+  --cpv-bg-a: #170c0e;
+  --cpv-bg-b: #1e1012;
+  --cpv-red: #f75049;
+  --cpv-red-soft: #c14540;
+  --cpv-red-deep: #75282a;
+  --cpv-cyan: #5ef6ff;
+  --cpv-cyan-dim: #49c4d4;
+  --cpv-text: #ded6cd;
+  --cpv-dim: #8d7f7c;
 
+  position: relative;
   background:
-    repeating-linear-gradient(0deg, transparent 0 2px, rgba(255, 255, 255, 0.012) 2px 4px),
-    var(--cp-bg);
-  color: var(--cp-text);
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(0, 0, 0, 0.14) 3px 4px),
+    radial-gradient(130% 100% at 50% -20%, var(--cpv-bg-b), var(--cpv-bg-a) 70%);
+  color: var(--cpv-text);
   font-family: Rajdhani, sans-serif;
   min-height: 100%;
-  padding: 18px 22px 40px;
+  padding: 14px 26px 26px;
+  display: flex;
+  flex-direction: column;
 }
+
+/* faint decorative hairlines along the top, like the game's HUD frame */
+.cp-pane::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(247, 80, 73, 0.4) 20%, rgba(247, 80, 73, 0.4) 80%, transparent);
+  pointer-events: none;
+}
+
+/* ---------- tab strip ---------- */
 
 .cp-tabbar {
   display: flex;
-  gap: 26px;
-  border-bottom: 1px solid var(--cp-line);
-  margin-bottom: 4px;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  padding: 14px 0 18px;
 }
 
 .cp-tab {
-  font-family: Orbitron, sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--cp-text-dim);
-  padding: 8px 2px 10px;
-  position: relative;
+  color: var(--cpv-red);
+  white-space: nowrap;
 }
 
 .cp-tab.active {
-  color: #fff;
+  color: var(--cpv-cyan);
+  padding: 3px 12px;
+  border: 1px solid rgba(94, 246, 255, 0.6);
+  box-shadow: 1px 1px 0 rgba(247, 80, 73, 0.45);
+  text-shadow: 0 0 7px rgba(94, 246, 255, 0.45);
 }
 
-.cp-tab.active::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 3px;
-  background: var(--cp-red);
+.cp-tab-page {
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cpv-cyan);
+  border: 1px solid var(--cpv-cyan-dim);
+  padding: 1px 7px;
+}
+
+/* ---------- content panel ---------- */
+
+.cp-panel {
+  flex: 1;
+  border-top: 1px solid rgba(94, 246, 255, 0.55);
+  padding: 0 6px;
 }
 
 .cp-subheader {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--cp-text);
-  background: var(--cp-panel);
-  border-bottom: 1px solid var(--cp-line);
-  padding: 8px 12px;
-  margin: 22px 0 2px;
+  color: var(--cpv-text);
+  padding: 10px 8px 6px;
+  border-bottom: 1px solid rgba(247, 80, 73, 0.25);
 }
+
+/* ---------- option rows ---------- */
 
 .cp-row {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 10px 12px;
-  border-bottom: 1px solid rgba(42, 42, 51, 0.55);
-  position: relative;
+  gap: 18px;
+  padding: 11px 8px;
+}
+
+.cp-row.selected {
+  background: rgba(94, 246, 255, 0.05);
+  outline: 1px solid rgba(94, 246, 255, 0.35);
+  outline-offset: -1px;
+}
+
+.cp-row.selectable {
+  cursor: pointer;
 }
 
 .cp-row:hover {
-  background: var(--cp-panel);
-}
-
-.cp-row:hover::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--cp-red);
+  background: rgba(247, 80, 73, 0.06);
 }
 
 .cp-row-text {
   flex: 1;
   min-width: 0;
+  cursor: default;
 }
 
 .cp-row-label {
   font-size: 17px;
-  font-weight: 600;
-  color: #fff;
+  font-weight: 500;
+  color: var(--cpv-red);
+  letter-spacing: 0.01em;
 }
 
 .cp-row-desc {
   font-size: 13px;
-  color: var(--cp-text-dim);
+  color: var(--cpv-dim);
   margin-top: 1px;
 }
 
@@ -111,43 +142,128 @@
   gap: 10px;
 }
 
-/* Toggle: two chamfered ON/OFF segments */
+/* ---------- selector: ◁ [ value ] ▷ bar ---------- */
+
+.cp-selector {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: min(300px, 34vw);
+  height: 30px;
+  border: 1px solid var(--cpv-red-soft);
+  background: rgba(0, 0, 0, 0.35);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  box-shadow: inset 0 0 0 1px rgba(247, 80, 73, 0.12);
+}
+
+.cp-selector button {
+  background: none;
+  border: none;
+  color: var(--cpv-red);
+  width: 34px;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.cp-selector button:hover {
+  color: var(--cpv-cyan);
+}
+
+.cp-selector-value {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cpv-cyan);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* the little dashed underline marks under the value, as in-game */
+.cp-selector-value::after {
+  content: '';
+  width: 46px;
+  border-bottom: 2px solid rgba(94, 246, 255, 0.5);
+  margin-top: 1px;
+  -webkit-mask-image: repeating-linear-gradient(90deg, #000 0 8px, transparent 8px 13px);
+  mask-image: repeating-linear-gradient(90deg, #000 0 8px, transparent 8px 13px);
+}
+
+/* ---------- switch: ON + cyan block ---------- */
+
 .cp-toggle {
   display: flex;
-  gap: 4px;
+  align-items: center;
+  gap: 12px;
   cursor: pointer;
   user-select: none;
 }
 
-.cp-toggle-seg {
+.cp-toggle-state {
+  font-family: 'Chakra Petch', sans-serif;
   font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 4px 16px;
-  border: 1px solid var(--cp-line);
-  color: var(--cp-text-dim);
-  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--cpv-red);
+  min-width: 30px;
+  text-align: right;
 }
 
-.cp-toggle-seg.on {
-  background: var(--cp-red);
-  border-color: var(--cp-red);
-  color: #0d0509;
+.cp-toggle-box {
+  position: relative;
+  width: 108px;
+  height: 26px;
+  border: 1px solid var(--cpv-red-soft);
+  background: rgba(0, 0, 0, 0.4);
+  clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 0 100%);
 }
 
-/* Slider */
+.cp-toggle-box::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  width: 46%;
+  transition: left 120ms ease-out, background 120ms ease-out;
+}
+
+.cp-toggle.on .cp-toggle-box::after {
+  left: 51%;
+  background: var(--cpv-cyan-dim);
+  box-shadow: 0 0 8px rgba(94, 246, 255, 0.35);
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
+}
+
+.cp-toggle.off .cp-toggle-box::after {
+  left: 3%;
+  background: #4a3a3a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-toggle-box::after {
+    transition: none;
+  }
+}
+
+/* ---------- slider ---------- */
+
 .cp-slider {
   display: flex;
   align-items: center;
-  gap: 10px;
-  width: 240px;
+  gap: 12px;
+  width: min(300px, 34vw);
 }
 
 .cp-slider input[type='range'] {
   flex: 1;
   appearance: none;
-  height: 2px;
-  background: var(--cp-line);
+  height: 3px;
+  background: var(--cpv-red-deep);
   border: none;
   padding: 0;
   cursor: pointer;
@@ -155,113 +271,136 @@
 
 .cp-slider input[type='range']::-webkit-slider-thumb {
   appearance: none;
-  width: 14px;
-  height: 14px;
-  background: var(--cp-red);
+  width: 12px;
+  height: 16px;
+  background: var(--cpv-cyan-dim);
   border: none;
   border-radius: 0;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), 50% 100%, 0 calc(100% - 5px));
 }
 
 .cp-slider input[type='range']::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
-  background: var(--cp-red);
+  width: 12px;
+  height: 16px;
+  background: var(--cpv-cyan-dim);
   border: none;
   border-radius: 0;
 }
 
 .cp-slider-value {
+  font-family: 'Chakra Petch', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: var(--cp-cyan);
-  border: 1px solid var(--cp-line);
-  padding: 2px 8px;
-  min-width: 52px;
+  color: var(--cpv-cyan);
+  border: 1px solid var(--cpv-red-soft);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px 9px;
+  min-width: 56px;
   text-align: center;
   clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
 }
 
-/* Selector: ‹ VALUE › */
-.cp-selector {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+/* ---------- button (the in-game DEFAULTS look) ---------- */
 
-.cp-selector button {
-  background: none;
-  border: none;
-  color: var(--cp-red);
-  font-size: 20px;
-  font-weight: 700;
-  padding: 0 6px;
-  cursor: pointer;
-  line-height: 1;
-}
-
-.cp-selector button:hover {
-  color: var(--cp-cyan);
-  border: none;
-}
-
-.cp-selector-value {
-  font-size: 15px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  min-width: 130px;
-  text-align: center;
-  color: #fff;
-}
-
-/* Button */
 .cp-button {
-  font-family: Rajdhani, sans-serif;
+  font-family: 'Chakra Petch', sans-serif;
   font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--cp-red);
-  background: transparent;
-  border: 1px solid var(--cp-red);
-  padding: 5px 22px;
+  color: var(--cpv-cyan);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--cpv-red-soft);
+  padding: 6px 26px;
   cursor: pointer;
-  clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%, 0 calc(100% - 8px));
 }
 
 .cp-button:hover {
-  background: var(--cp-red);
-  color: #0d0509;
+  border-color: var(--cpv-cyan-dim);
+  text-shadow: 0 0 7px rgba(94, 246, 255, 0.5);
 }
 
-/* Keybind chip */
+/* ---------- keybind chip ---------- */
+
 .cp-keybind {
+  font-family: 'Chakra Petch', sans-serif;
   font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--cp-cyan);
-  border: 1px solid var(--cp-line);
-  background: var(--cp-panel);
-  padding: 4px 14px;
-  min-width: 64px;
+  font-weight: 600;
+  color: var(--cpv-cyan);
+  border: 1px solid var(--cpv-red-soft);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 4px 16px;
+  min-width: 70px;
   text-align: center;
   cursor: pointer;
   clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 0 100%);
 }
 
 .cp-keybind.listening {
-  color: var(--cp-red);
-  border-color: var(--cp-red);
+  color: var(--cpv-red);
+  border-color: var(--cpv-red);
 }
+
+/* ---------- footer: DEFAULTS + key hints ---------- */
+
+.cp-footer {
+  display: flex;
+  justify-content: center;
+  padding: 26px 0 8px;
+}
+
+.cp-keyhints {
+  display: flex;
+  justify-content: flex-end;
+  gap: 22px;
+  padding: 10px 4px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cp-keyhint {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--cpv-red);
+}
+
+.cp-keyhint.close {
+  color: #7de89a;
+}
+
+.cp-keyhint kbd {
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid currentcolor;
+  padding: 1px 5px;
+}
+
+/* ---------- misc ---------- */
 
 .cp-hint {
   font-size: 13px;
-  color: var(--cp-text-dim);
-  padding: 10px 12px 0;
+  color: var(--cpv-dim);
+  padding: 10px 8px 0;
 }
 
 .cp-empty {
-  color: var(--cp-text-dim);
-  padding: 30px 12px;
+  color: var(--cpv-dim);
+  padding: 34px 12px;
   text-align: center;
+  font-size: 15px;
+}
+
+.cp-version {
+  position: absolute;
+  left: 14px;
+  bottom: 10px;
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 10px;
+  color: rgba(247, 80, 73, 0.5);
+  border: 1px solid rgba(247, 80, 73, 0.3);
+  padding: 1px 5px;
+  pointer-events: none;
 }

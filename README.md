@@ -24,6 +24,7 @@ subcategories and shared tabs) is a recurring hurdle when shipping sector varian
 ## Using it
 
 Open the site (GitHub Pages), build your menu, press Export. Install the zip like any mod.
+Append `?example` to the site URL (or press Load example) to explore a filled-in project.
 Docs:
 
 - [Exporting and shipping](docs/exporting.md)

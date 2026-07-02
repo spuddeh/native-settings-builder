@@ -2,9 +2,27 @@ import { useProjectStore } from '../state/store'
 import { slugify } from '../model/defaults'
 import { SelectField, TextField } from './fields'
 
+function pascalize(name: string): string {
+  return name.replace(/[^A-Za-z0-9]+(.)?/g, (_, c: string | undefined) => (c ? c.toUpperCase() : ''))
+    .replace(/^./, (c) => c.toUpperCase())
+}
+
 export function MetadataForm() {
   const mod = useProjectStore((s) => s.doc.mod)
   const setMod = useProjectStore((s) => s.setMod)
+
+  // Derived fields follow the mod name until the author edits them by hand:
+  // a field is updated only while its value still matches what the previous
+  // name would have derived.
+  const renameMod = (modName: string) => {
+    const patch: Parameters<typeof setMod>[0] = { modName }
+    if (mod.cetFolderName === pascalize(mod.modName)) patch.cetFolderName = pascalize(modName)
+    if (mod.subCategoryPrefix === slugify(mod.modName)) patch.subCategoryPrefix = slugify(modName)
+    if (mod.tabMode === 'own' && mod.ownTab && mod.ownTab.id === slugify(mod.modName) && mod.ownTab.label === mod.modName) {
+      patch.ownTab = { id: slugify(modName), label: modName }
+    }
+    setMod(patch)
+  }
 
   return (
     <div>
@@ -12,7 +30,7 @@ export function MetadataForm() {
         <TextField
           label="Mod name"
           value={mod.modName}
-          onChange={(modName) => setMod({ modName })}
+          onChange={renameMod}
           hint="Shown to players. Also usable as LocKey#…"
         />
         <TextField
